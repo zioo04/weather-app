@@ -2,110 +2,137 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Retro Weather Clock</title>
+    <title>Retro Weather Clock - White Label</title>
     <style>
         :root {
-            --bg-color: #f4f1ea;
-            --panel-color: #e8e4d8;
-            --led-off: #441111;
+            --case-bg: #e2dfd2; /* 본체 베이지색 */
+            --label-bg: #f5f5f5; /* 글씨 칸 흰색/연회색 */
+            --led-off: #4a1313;
             --led-on: #ff0000;
         }
-        body { background: #ddd; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; font-family: 'Apple SD Gothic Neo', sans-serif; }
+        body { 
+            background: #333; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0;
+            transform: scale(1.5); /* 시원한 크기 */
+        }
         
-        /* 메인 프레임 */
-        .clock-case {
-            background: var(--panel-color);
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.8), 5px 5px 15px rgba(0,0,0,0.2);
-            width: 320px;
-            text-align: center;
-            transform: scale(1.7);
-            transform-origin: center;
+        .case {
+            background: var(--case-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 
+                8px 8px 25px rgba(0,0,0,0.6),
+                inset 2px 2px 5px rgba(255,255,255,0.8);
+            width: 330px;
+            border: 2px solid #c9c5b5;
         }
 
-        /* 도시 검색창 */
-        .search-box { margin-bottom: 20px; }
-        input { border: 1px solid #ccc; padding: 5px; border-radius: 3px; background: #fafafa; }
-        button { cursor: pointer; background: #666; color: white; border: none; padding: 5px 10px; border-radius: 3px; }
-
-        /* 날씨 패널 */
-        .weather-panel {
-            background: #2d3436;
+        .weather-container {
+            background: #222; /* 안쪽 어두운 패널 */
             padding: 15px;
-            border-radius: 5px;
-            color: #dfe6e9;
-            text-align: left;
+            border-radius: 6px;
+            border: 3px solid #b5b1a1;
         }
 
-        .weather-row {
+        .row {
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
-            padding: 5px;
-            border-radius: 3px;
-            opacity: 0.5; /* 기본은 흐리게 */
+            margin-bottom: 10px;
+            opacity: 0.6; /* 기본은 약간 흐리게 */
             transition: 0.3s;
         }
 
-        .weather-row.active { opacity: 1; background: rgba(255,255,255,0.1); }
+        .row.active { opacity: 1; }
 
-        .color-box { width: 40px; height: 30px; border-radius: 3px; margin-right: 10px; display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        
-        .led {
-            width: 10px; height: 10px; background: var(--led-off);
-            border-radius: 50%; margin-right: 15px;
-            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+        /* 색상 아이콘 */
+        .color-box {
+            width: 40px; height: 32px;
+            border-radius: 3px;
+            margin-right: 8px;
+            box-shadow: inset 1px 1px 3px rgba(0,0,0,0.3);
         }
-
-        .active .led {
-            background: var(--led-on);
-            box-shadow: 0 0 8px var(--led-on), inset 1px 1px 2px rgba(255,255,255,0.5);
-        }
-
-        .text-group { flex-grow: 1; font-size: 12px; border-bottom: 1px solid #444; padding-bottom: 2px; }
-        .eng { float: right; font-size: 10px; color: #888; }
-
-        /* 색상 지정 */
         .red { background: #d63031; }
-        .yellow { background: #fdcb6e; }
-        .green { background: #00b894; }
+        .yellow { background: #f1c40f; }
+        .green { background: #2ecc71; }
         .blue { background: #0984e3; }
 
-        .temp-display { font-size: 24px; margin-top: 15px; color: #333; font-weight: bold; }
+        /* LED 전구 */
+        .led {
+            width: 12px; height: 12px;
+            background: var(--led-off);
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 1px solid #000;
+        }
+        .active .led {
+            background: var(--led-on);
+            box-shadow: 0 0 10px var(--led-on), 0 0 5px var(--led-on);
+        }
+
+        /* ✨ 요청하신 흰색 바탕 + 검정 글씨 부분 */
+        .text-label {
+            background: var(--label-bg);
+            flex-grow: 1;
+            padding: 6px 10px;
+            border-radius: 2px;
+            color: #1a1a1a; /* 검정 글씨 */
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+        .eng-sub { font-size: 10px; color: #666; font-weight: 400; }
+
+        /* 하단 검색창 & 온도 */
+        .footer {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        input { width: 110px; padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        .temp-display { font-size: 32px; font-weight: 900; color: #222; font-family: monospace; }
     </style>
 </head>
 <body>
 
-<div class="clock-case">
-    <div class="search-box">
-        <input type="text" id="cityInput" placeholder="City (e.g. Sydney)">
-        <button onclick="getWeather()">GO</button>
+<div class="case">
+    <div class="weather-container">
+        <div class="row" id="row-clear">
+            <div class="color-box red"></div>
+            <div class="led"></div>
+            <div class="text-label">よいでしょう <span class="eng-sub">Fair</span></div>
+        </div>
+        <div class="row" id="row-clouds">
+            <div class="color-box yellow"></div>
+            <div class="led"></div>
+            <div class="text-label">快方に向います <span class="eng-sub">Clearing</span></div>
+        </div>
+        <div class="row" id="row-mist">
+            <div class="color-box green"></div>
+            <div class="led"></div>
+            <div class="text-label">下り坂に向います <span class="eng-sub">Cloudy</span></div>
+        </div>
+        <div class="row" id="row-rain">
+            <div class="color-box blue"></div>
+            <div class="led"></div>
+            <div class="text-label">わる이でしょう <span class="eng-sub">Rainy</span></div>
+        </div>
     </div>
 
-    <div class="weather-panel">
-        <div class="weather-row" id="row-clear">
-            <div class="color-box red">☀️</div>
-            <div class="led"></div>
-            <div class="text-group">よいでしょう <span class="eng">Fair</span></div>
+    <div class="footer">
+        <div>
+            <input type="text" id="cityInput" placeholder="CITY NAME">
+            <button onclick="getWeather()" style="cursor:pointer; padding: 6px 12px; border-radius: 4px; background: #666; color: white; border: none;">SET</button>
         </div>
-        <div class="weather-row" id="row-clouds">
-            <div class="color-box yellow">🌤️</div>
-            <div class="led"></div>
-            <div class="text-group">快方に向います <span class="eng">Clearing</span></div>
-        </div>
-        <div class="weather-row" id="row-mist">
-            <div class="color-box green">☁️</div>
-            <div class="led"></div>
-            <div class="text-group">下り坂に向います <span class="eng">Cloudy</span></div>
-        </div>
-        <div class="weather-row" id="row-rain">
-            <div class="color-box blue">🌧️</div>
-            <div class="led"></div>
-            <div class="text-group">わるいでしょう <span class="eng">Rainy</span></div>
-        </div>
+        <div class="temp-display" id="temp">--°C</div>
     </div>
-    <div id="temp" class="temp-display">--°C</div>
 </div>
 
 <script>
@@ -115,27 +142,17 @@
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
 
         try {
-            const response = await fetch(url);
-            const data = await response.json();
-
-            // 모든 행 초기화
-            document.querySelectorAll('.weather-row').forEach(row => row.classList.remove('active'));
-            
-            const main = data.weather[0].main.toLowerCase();
+            const res = await fetch(url);
+            const data = await res.json();
+            document.querySelectorAll('.row').forEach(r => r.classList.remove('active'));
             document.getElementById('temp').innerText = Math.round(data.main.temp) + "°C";
 
-            // 상태에 따른 LED 점등
-            if (main.includes('clear')) {
-                document.getElementById('row-clear').classList.add('active');
-            } else if (main.includes('cloud')) {
-                document.getElementById('row-clouds').classList.add('active');
-            } else if (main.includes('rain') || main.includes('drizzle') || main.includes('thunderstorm')) {
-                document.getElementById('row-rain').classList.add('active');
-            } else {
-                document.getElementById('row-mist').classList.add('active');
-            }
-
-        } catch (e) { alert("도시 이름을 확인해주세요."); }
+            const main = data.weather[0].main.toLowerCase();
+            if (main.includes('clear')) document.getElementById('row-clear').classList.add('active');
+            else if (main.includes('cloud')) document.getElementById('row-clouds').classList.add('active');
+            else if (main.includes('rain') || main.includes('drizzle') || main.includes('thunderstorm')) document.getElementById('row-rain').classList.add('active');
+            else document.getElementById('row-mist').classList.add('active');
+        } catch (e) { alert("City not found!"); }
     }
 </script>
 
